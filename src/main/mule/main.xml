@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="mainFlow"
+		doc:id="0158c6a0-5cab-4f7f-84e0-c392b0fadb6f">
+		<http:listener doc:name="HTTP: GET /hello"
+			doc:id="8e57f3f0-643a-4753-98f7-073df646daac"
+			config-ref="HTTP_Listener_config" path="/hello">
+			<http:response
+				statusCode="#[vars.httpStatus default 200]" />
+			<http:error-response
+				statusCode="#[vars.httpStatus default 500]" />
+		</http:listener>
+		<ee:transform doc:name="payload"
+			doc:id="1133a4cf-8f91-4179-b7f5-ac1629ddb6fa">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var myDtae = now()>> "IST"
+---
+{
+	"correlationId": correlationId,
+	"Status": "Success",
+	"message": "Response from demo-project app",
+	"timestamp": myDtae as String {format: "KK:mm:ss a, MMMM dd, uuuu"}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[200 as Number]"
+			doc:name="httpStatus" doc:id="97b7619d-4d3b-4d41-9a7a-bf7ebca260be"
+			variableName="httpStatus" />
+		<logger level="INFO" doc:name="Logger"
+			doc:id="830e4bb8-eab8-45d0-b208-ba4eba570a1a" message="#[payload]" />
+	</flow>
+</mule>
