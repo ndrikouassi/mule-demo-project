@@ -3,7 +3,7 @@
         <server>
             <id>ca.anypoint.credentials</id>
             <username>~~~Client~~~</username>
-            <password>1271197799a443d0b51ef1197c90cdc1~?~1e06e050fa1647499CDB72D54ca565a1</password>
+            <password>${CA_CLIENT_ID}~?~${CA_CLIENT_SECRET}</password>
         </server>
     </servers>
 </settings>
